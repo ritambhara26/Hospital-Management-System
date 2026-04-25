@@ -34,3 +34,9 @@ logging:
     root: INFO
     hospital.management.admin: DEBUG
 
+springdoc:
+  api-docs:
+    enabled: true
+  swagger-ui:
+    enabled: true
+

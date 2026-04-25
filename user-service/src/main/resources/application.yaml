@@ -34,3 +34,14 @@ logging:
     root: INFO
     hospital.management.user: DEBUG
 
+springdoc:
+  swagger-ui:
+    enabled: true
+
+  api-docs:
+    enabled: true
+
+  override-with-generic-response: false
+
+  default-produces-media-type: application/json
+

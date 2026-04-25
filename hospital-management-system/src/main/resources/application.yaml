@@ -26,10 +26,15 @@ logging:
   level:
     root: INFO
     hospital.management.system: DEBUG
-  pattern:
-    console: "%d{yyyy-MM-dd HH:mm:ss} - %msg%n"
-  file:
-    name: logs/hospital-service.log
-    max-size: 10MB
-    max-history: 30
+    
+springdoc:
+  swagger-ui:
+    enabled: true
+
+  api-docs:
+    enabled: true
+
+  override-with-generic-response: false
+
+  default-produces-media-type: application/json
 
