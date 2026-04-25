@@ -18,22 +18,22 @@ public class SecurityConfig {
     }
 
     @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
 
-                        // ✅ Allow Swagger
+
                         .requestMatchers(
-                                "/swagger-ui/**",
                                 "/v3/api-docs/**",
+                                "/swagger-ui/**",
                                 "/swagger-ui.html"
                         ).permitAll()
 
-                        // (Optional) allow login/register APIs
-                        .requestMatchers("/api/admin/**").permitAll()
 
-                        // बाकी सब secure
+                        .requestMatchers( "/api/admin/**").permitAll()
+
+
                         .anyRequest().authenticated()
                 );
 

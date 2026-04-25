@@ -1,72 +1,63 @@
+server:
+  port: 8080
+
 spring:
   application:
     name: api-gateway
+
   cloud:
     gateway:
-      discovery:
-        locator:
-          enabled: true
-          lower-case-service-id: true
       routes:
-        # User Service Routes
-        - id: user-service-auth
+
+
+        - id: hospital-service
+          uri: lb://hospital-service
+          predicates:
+            - Path=/hospital/**
+          filters:
+            - StripPrefix=1
+
+
+        - id: user-service
           uri: lb://user-service
           predicates:
             - Path=/api/auth/**
           filters:
-            - RewritePath=/api(?<segment>/?.*), $\{segment}
+            - StripPrefix=2
 
-        # Admin Service Routes
+
         - id: admin-service
           uri: lb://admin-service
           predicates:
             - Path=/api/admin/**
           filters:
-            - RewritePath=/api(?<segment>/?.*), $\{segment}
+            - StripPrefix=2
 
-        # Hospital Service Routes
-        - id: hospital-service-appointments
-          uri: lb://hospital-service
-          predicates:
-            - Path=/api/appointments/**
-          filters:
-            - RewritePath=/api(?<segment>/?.*), $\{segment}
-
-        - id: hospital-service-doctors
-          uri: lb://hospital-service
-          predicates:
-            - Path=/api/doctors/**
-          filters:
-            - RewritePath=/api(?<segment>/?.*), $\{segment}
-
-        - id: hospital-service-patients
-          uri: lb://hospital-service
-          predicates:
-            - Path=/api/patients/**
-          filters:
-            - RewritePath=/api(?<segment>/?.*), $\{segment}
-
-        - id: hospital-service-prescriptions
-          uri: lb://hospital-service
-          predicates:
-            - Path=/api/prescriptions/**
-          filters:
-            - RewritePath=/api(?<segment>/?.*), $\{segment}
-
-        - id: hospital-service-medications
-          uri: lb://hospital-service
-          predicates:
-            - Path=/api/medications/**
-          filters:
-            - RewritePath=/api(?<segment>/?.*), $\{segment}
-
-server:
-  port: 8080
 
 eureka:
   client:
     service-url:
       defaultZone: http://localhost:8761/eureka/
-  instance:
-    prefer-ip-address: true
 
+springdoc:
+  api-docs:
+    enabled: true
+
+
+  swagger-ui:
+    enabled: true
+    urlsPrimaryName: hospital-service
+
+    urls:
+       - name: hospital-service
+         url: http://localhost:8080/hospital/v3/api-docs
+
+       - name: user-service
+         url: http://localhost:8080/api/auth/v3/api-docs
+
+       - name: admin-service
+         url: http://localhost:8080/api/admin/v3/api-docs
+
+logging:
+  level:
+    org.springframework.cloud.gateway: DEBUG
