@@ -8,7 +8,7 @@ import hospital.management.admin.repository.AdminRepository;
 import hospital.management.admin.security.JwtTokenProvider;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -21,7 +21,8 @@ public class AdminService {
     @Autowired
     private JwtTokenProvider jwtTokenProvider;
 
-    private final BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
 
     public AdminLoginResponse login(AdminLoginRequest request) {

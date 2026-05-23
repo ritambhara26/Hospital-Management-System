@@ -5,6 +5,8 @@ import hospital.management.system.service.AppointmentService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -18,9 +20,15 @@ public class AppointmentController {
     private final AppointmentService service;
 
     @PostMapping
+    @PreAuthorize("hasRole('ADMIN') or hasRole('USER')")
     public ResponseEntity<Appointment> create(@RequestBody Appointment appointment) {
         log.info("POST request to create appointment");
         try {
+            // Auto-populate userId from JWT token for users
+            Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+            if (principal instanceof Long && hasRole("ROLE_USER")) {
+                appointment.setUserId((Long) principal);
+            }
             Appointment createdAppointment = service.create(appointment);
             log.info("Appointment created successfully with ID: {}", createdAppointment.getAppointmentId());
             return ResponseEntity.ok(createdAppointment);
@@ -31,6 +39,7 @@ public class AppointmentController {
     }
 
     @GetMapping
+    @PreAuthorize("hasRole('ADMIN')")
     public List<Appointment> getAll() {
         log.debug("GET request to retrieve all appointments");
         try {
@@ -44,6 +53,7 @@ public class AppointmentController {
     }
 
     @GetMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN') or @appointmentSecurityService.canAccessAppointment(#id, authentication)")
     public Appointment getById(@PathVariable Long id) {
         log.debug("GET request to retrieve appointment with ID: {}", id);
         try {
@@ -57,6 +67,7 @@ public class AppointmentController {
     }
 
     @PutMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN') or @appointmentSecurityService.canUpdateAppointment(#id, authentication)")
     public ResponseEntity<Appointment> update(@PathVariable Long id, @RequestBody Appointment appointment) {
         log.info("PUT request to update appointment with ID: {}", id);
         try {
@@ -70,6 +81,7 @@ public class AppointmentController {
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public void delete(@PathVariable Long id) {
         log.info("DELETE request to delete appointment with ID: {}", id);
         try {
@@ -79,5 +91,11 @@ public class AppointmentController {
             log.error("Error deleting appointment with ID: {}", id, e);
             throw e;
         }
+    }
+
+    private boolean hasRole(String role) {
+        return SecurityContextHolder.getContext().getAuthentication().getAuthorities()
+                .stream()
+                .anyMatch(auth -> auth.getAuthority().equals(role));
     }
 }

@@ -5,6 +5,9 @@ import hospital.management.system.service.PatientService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -18,6 +21,7 @@ public class PatientController {
     private final PatientService service;
 
     @PostMapping
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Patient> create(@RequestBody Patient patient) {
         log.info("POST request to create patient with email: {}", patient.getEmail());
         try {
@@ -31,6 +35,7 @@ public class PatientController {
     }
 
     @GetMapping
+    @PreAuthorize("hasRole('ADMIN')")
     public List<Patient> getAll() {
         log.debug("GET request to retrieve all patients");
         try {
@@ -44,6 +49,7 @@ public class PatientController {
     }
 
     @GetMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN') or @patientSecurityService.canAccessPatient(#id, authentication)")
     public Patient get(@PathVariable Long id) {
         log.debug("GET request to retrieve patient with ID: {}", id);
         try {
@@ -57,6 +63,7 @@ public class PatientController {
     }
 
     @PutMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Patient> update(@PathVariable Long id, @RequestBody Patient patient) {
         log.info("PUT request to update patient with ID: {}", id);
         try {
@@ -70,6 +77,7 @@ public class PatientController {
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public void delete(@PathVariable Long id) {
         log.info("DELETE request to delete patient with ID: {}", id);
         try {

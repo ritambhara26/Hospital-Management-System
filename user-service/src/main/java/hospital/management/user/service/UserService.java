@@ -6,13 +6,15 @@ import hospital.management.user.dto.UserRegistrationRequest;
 import hospital.management.user.entity.User;
 import hospital.management.user.repository.UserRepository;
 import hospital.management.user.security.JwtTokenProvider;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
 @Slf4j
+@RequiredArgsConstructor
 public class UserService {
 
     @Autowired
@@ -21,7 +23,7 @@ public class UserService {
     @Autowired
     private JwtTokenProvider jwtTokenProvider;
 
-    private final BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+    private final PasswordEncoder passwordEncoder;
 
     public LoginResponse login(LoginRequest request) {
         log.info("Login attempt for email: {}", request.getEmail());
@@ -29,13 +31,16 @@ public class UserService {
         User user = userRepository.findByEmail(request.getEmail())
                 .orElseThrow(() -> new RuntimeException("User not found with email: " + request.getEmail()));
 
-        if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
+        if (!passwordEncoder.matches(
+                request.getPassword(),
+                user.getPassword())) {
+
             throw new RuntimeException("Invalid password");
         }
 
         String fullName = user.getFirstName() + " " + user.getLastName();
         String token = jwtTokenProvider.generateToken(
-                user.getId(),
+                user.getUserId(),
                 user.getEmail(),
                 "ROLE_USER",
                 "USER"
@@ -46,7 +51,7 @@ public class UserService {
         return new LoginResponse(
                 token,
                 "Bearer",
-                user.getId(),
+                user.getUserId(),
                 user.getEmail(),
                 fullName,
                 null,
@@ -62,11 +67,14 @@ public class UserService {
         }
 
         User user = new User();
-        user.setEmail(request.getEmail());
-        user.setPassword(passwordEncoder.encode(request.getPassword()));
-
         user.setFirstName(request.getFirstName());
         user.setLastName(request.getLastName());
+        user.setEmail(request.getEmail());
+        user.setPassword(
+                passwordEncoder.encode(request.getPassword())
+        );
+
+
 
         return userRepository.save(user);
     }

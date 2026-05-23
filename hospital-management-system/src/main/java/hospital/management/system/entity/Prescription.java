@@ -27,4 +27,7 @@ public class Prescription {
     private Doctor doctor;
 
     private String notes;
+
+    @Column(name = "user_id")
+    private Long userId;
 }

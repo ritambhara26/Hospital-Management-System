@@ -22,22 +22,21 @@ public class SecurityConfig {
         http
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
-
-
                         .requestMatchers(
                                 "/v3/api-docs/**",
                                 "/swagger-ui/**",
                                 "/swagger-ui.html"
                         ).permitAll()
-
-
-                        .requestMatchers( "/api/admin/**").permitAll()
-
-
+                        .requestMatchers("/api/admin/login").permitAll()
+                        .requestMatchers("/api/admin/health").permitAll()
+                        .requestMatchers("/api/admin/create").denyAll()
+                        .requestMatchers("/api/admin/**").authenticated()
                         .anyRequest().authenticated()
                 );
 
         return http.build();
     }
 }
+
+
 

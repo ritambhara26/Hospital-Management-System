@@ -7,13 +7,17 @@ import org.springdoc.core.customizers.OpenApiCustomizer;
 
 import java.util.List;
 
+import io.swagger.v3.oas.models.OpenAPI;
+
+
 @Configuration
 public class SwaggerConfig {
 
     @Bean
-    public OpenApiCustomizer openApiCustomizer() {
-        return openApi -> openApi.setServers(
-                List.of(new Server().url("/"))
-        );
+    public OpenAPI customOpenAPI() {
+        return new OpenAPI()
+                .servers(List.of(
+                        new Server().url("http://localhost:8080/hospital")
+                ));
     }
 }
