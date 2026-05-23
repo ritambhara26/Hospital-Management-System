@@ -2,7 +2,7 @@ spring:
   application:
     name: admin-service
   datasource:
-    url: jdbc:mysql://localhost:3306/hospital_management?useSSL=false&serverTimezone=UTC
+    url: jdbc:mysql://localhost:3306/hospital_management?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
     username: root
     password: root
     driver-class-name: com.mysql.cj.jdbc.Driver
@@ -15,7 +15,7 @@ spring:
         dialect: org.hibernate.dialect.MySQL8Dialect
   security:
     jwt:
-      secret: hospital-management-admin-service-jwt-secret-key-please-change-in-production-environment-2024
+      secret: hospital-management-user-service-jwt-secret-key-please-change-in-production-environment-2024
       expiration: 86400000
 
 server:

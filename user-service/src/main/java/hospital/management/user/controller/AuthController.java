@@ -41,7 +41,7 @@ public class AuthController {
             User user = userService.register(request);
             Map<String, Object> response = new HashMap<>();
             response.put("message", "User registered successfully");
-            response.put("userId", user.getId());
+            response.put("userId", user.getUserId());
             response.put("email", user.getEmail());
             response.put("first_name",user.getFirstName());
             response.put("last_name", user.getLastName());

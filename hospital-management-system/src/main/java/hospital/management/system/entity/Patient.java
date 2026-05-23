@@ -29,6 +29,9 @@ public class Patient {
     private LocalDate dob;
     private String gender;
 
+    @Column(name = "user_id")
+    private Long userId;
+
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private LocalDateTime createdAt = LocalDateTime.now();
 

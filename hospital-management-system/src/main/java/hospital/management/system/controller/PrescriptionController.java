@@ -4,6 +4,8 @@ import hospital.management.system.entity.Prescription;
 import hospital.management.system.service.PrescriptionService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -17,6 +19,7 @@ public class PrescriptionController {
     private final PrescriptionService service;
 
     @PostMapping
+    @PreAuthorize("hasRole('ADMIN')")
     public Prescription create(@RequestBody Prescription prescription) {
         log.info("POST request to create prescription");
         try {
@@ -30,6 +33,7 @@ public class PrescriptionController {
     }
 
     @GetMapping
+    @PreAuthorize("hasRole('ADMIN')")
     public List<Prescription> getAll() {
         log.debug("GET request to retrieve all prescriptions");
         try {
@@ -43,6 +47,7 @@ public class PrescriptionController {
     }
 
     @GetMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN') or @prescriptionSecurityService.canAccessPrescription(#id, authentication)")
     public Prescription getById(@PathVariable Long id) {
         log.debug("GET request to retrieve prescription with ID: {}", id);
         try {
@@ -56,6 +61,7 @@ public class PrescriptionController {
     }
 
     @PutMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public Prescription update(@PathVariable Long id, @RequestBody Prescription prescription) {
         log.info("PUT request to update prescription with ID: {}", id);
         try {
@@ -69,6 +75,7 @@ public class PrescriptionController {
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public void delete(@PathVariable Long id) {
         log.info("DELETE request to delete prescription with ID: {}", id);
         try {

@@ -33,4 +33,7 @@ public class Appointment {
     private LocalDateTime appointmentDate;
 
     private String status;
+
+    @Column(name = "user_id")
+    private Long userId;
 }

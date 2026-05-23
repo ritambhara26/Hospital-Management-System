@@ -5,6 +5,7 @@ import hospital.management.system.service.MedicationService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -18,6 +19,7 @@ public class MedicationController {
     private final MedicationService service;
 
     @PostMapping
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Medication> create(@RequestBody Medication medication) {
         log.info("POST request to create medication: {}", medication.getName());
         try {
@@ -31,6 +33,7 @@ public class MedicationController {
     }
 
     @GetMapping
+    @PreAuthorize("permitAll()")
     public List<Medication> getAll() {
         log.debug("GET request to retrieve all medications");
         try {
@@ -44,6 +47,7 @@ public class MedicationController {
     }
 
     @GetMapping("/{id}")
+    @PreAuthorize("permitAll()")
     public Medication getById(@PathVariable Long id) {
         log.debug("GET request to retrieve medication with ID: {}", id);
         try {
@@ -57,6 +61,7 @@ public class MedicationController {
     }
 
     @PutMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Medication> update(@PathVariable Long id, @RequestBody Medication medication) {
         log.info("PUT request to update medication with ID: {}", id);
         try {
@@ -70,6 +75,7 @@ public class MedicationController {
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public void delete(@PathVariable Long id) {
         log.info("DELETE request to delete medication with ID: {}", id);
         try {

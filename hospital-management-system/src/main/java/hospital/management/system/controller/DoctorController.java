@@ -6,6 +6,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -19,6 +20,7 @@ public class DoctorController {
     private final DoctorService service;
 
     @PostMapping
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Doctor> create(@Valid @RequestBody Doctor doctor) {
         log.info("POST request to create doctor with email: {}", doctor.getEmail());
         try {
@@ -32,6 +34,7 @@ public class DoctorController {
     }
 
     @GetMapping
+    @PreAuthorize("permitAll()")
     public List<Doctor> getAll() {
         log.debug("GET request to retrieve all doctors");
         try {
@@ -45,6 +48,7 @@ public class DoctorController {
     }
 
     @GetMapping("/{id}")
+    @PreAuthorize("permitAll()")
     public Doctor get(@PathVariable Long id) {
         log.debug("GET request to retrieve doctor with ID: {}", id);
         try {
@@ -58,6 +62,7 @@ public class DoctorController {
     }
 
     @PutMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Doctor> update(@PathVariable Long id,
                                          @Valid @RequestBody Doctor doctor) {
         log.info("PUT request to update doctor with ID: {}", id);
@@ -73,6 +78,7 @@ public class DoctorController {
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public void delete(@PathVariable Long id) {
         log.info("DELETE request to delete doctor with ID: {}", id);
         try {
